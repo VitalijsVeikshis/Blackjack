@@ -1,10 +1,10 @@
 class Deck
   CARD_RANGE = %w[2 3 4 5 6 7 8 9 10 J Q K A].freeze
   SUITS = {
-    D: "\u2662".encode('utf-8'),
-    C: "\u2667".encode('utf-8'),
-    H: "\u2661".encode('utf-8'),
-    S: "\u2664".encode('utf-8')
+    diamonds: "\u2662".encode('utf-8'),
+    clubs: "\u2667".encode('utf-8'),
+    hearts: "\u2661".encode('utf-8'),
+    spades: "\u2664".encode('utf-8')
   }.freeze
 
   def initialize
@@ -24,8 +24,8 @@ class Deck
   def initialize_suit(suit, view)
     CARD_RANGE.map do |value|
       {
-        name: value + suit.to_s,
         value: value,
+        suit: suit.to_s,
         view: value + view
       }
     end
