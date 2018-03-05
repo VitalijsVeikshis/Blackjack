@@ -8,20 +8,23 @@ class Table
   end
 
   def play
-    raise StandardError, 'Not enough money' if bankroll_zero?
+    validate!
     @queue = [@player, @diller]
     @active = @queue.shift
     @deck = Deck.new
     @bank = 2 * @bet
     puts "Bank: #{@bank}"
-    initialize_player(@player)
-    initialize_player(@diller)
+    initialize_players
     @game = true
+    @diller_went = false
     check_player
   end
 
   def hit
-    @active.add_card(@deck.deal) if @active.cards.size == 2
+    if @active.cards.size > 2
+      raise StandardError, "You can't take another card from the dealer!"
+    end
+    @active.add_card
     stand
   end
 
@@ -29,27 +32,38 @@ class Table
     @active.show_cards if check_player < 21
     @queue << @active
     @active = @queue.shift
-    @player.scores
+    diller_turn if @player.scores < 21 && @diller_went == false
   end
 
   def show
     check_winner
-    @player.scores
+  end
+
+  def diller_turn
+    @diller_went = true
+    stand if @diller.scores >= 17
+    hit if @diller.scores < 17
   end
 
   private
 
+  def initialize_players
+    initialize_player(@player)
+    initialize_player(@diller)
+  end
+
   def initialize_player(player)
     player.subtract_bankroll(@bet)
     player.clean_cards
-    2.times { player.add_card(@deck.deal) }
+    player.deck = @deck
+    2.times { player.add_card }
     player.show_cards
   end
 
   def check_winner
-    draft_show if draw?
-    win_show(@player) if win?(@player, @diller)
-    win_show(@diller) if win?(@diller, @player)
+    draft_show if @deck.draw?(@player, @diller)
+    win_show(@player) if @deck.win?(@player, @diller)
+    win_show(@diller) if @deck.win?(@diller, @player)
   end
 
   def check_player
@@ -78,15 +92,12 @@ class Table
     @diller.show_cards(false)
   end
 
-  def draw?
-    @player.scores == @diller.scores
-  end
-
-  def win?(winner, foe)
-    winner.scores <= 21 && winner.scores > foe.scores || foe.scores > 21
-  end
-
   def bankroll_zero?
-    @player.bankroll.zero? || @player.bankroll.zero?
+    @player.bankroll.zero? || @diller.bankroll.zero?
+  end
+
+  def validate!
+    raise StandardError, 'Not enough money!' if bankroll_zero?
+    raise StandardError, 'You are in game!' if @game
   end
 end

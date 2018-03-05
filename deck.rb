@@ -15,6 +15,22 @@ class Deck
     @deck.pop
   end
 
+  def scores(cards)
+    cards.reduce(0) { |scores, card| scores + score_get(card, scores) }
+  end
+
+  def draw?(winner, foe)
+    scores(winner.cards) == scores(foe.cards)
+  end
+
+  def win?(winner, foe)
+    winner?(winner, foe) || scores(foe.cards) > 21
+  end
+
+  def winner?(winner, foe)
+    scores(winner.cards) <= 21 && scores(winner.cards) > scores(foe.cards)
+  end
+
   private
 
   def make_deck
@@ -29,5 +45,28 @@ class Deck
         view: value + view
       }
     end
+  end
+
+  def score_get(card, scores)
+    return card[:value].to_i if number_card?(card)
+    return 10 if face_card?(card)
+    return 1 if ace_less?(card, scores)
+    return 11 if ace_more?(card, scores)
+  end
+
+  def number_card?(card)
+    (2..10).to_a.include?(card[:value].to_i)
+  end
+
+  def face_card?(card)
+    %w[J Q K].include?(card[:value])
+  end
+
+  def ace_less?(card, scores)
+    card[:value].eql?('A') && scores + 11 > 21
+  end
+
+  def ace_more?(card, scores)
+    card[:value].eql?('A') && scores + 11 <= 21
   end
 end

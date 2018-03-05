@@ -1,9 +1,5 @@
-require_relative 'blackjack_scores'
-
 class Player
-  include BlackjackScores
-
-  attr_accessor :name
+  attr_accessor :name, :deck
   attr_reader :bankroll, :cards
 
   def initialize(options)
@@ -20,17 +16,21 @@ class Player
     @bankroll -= amount
   end
 
-  def add_card(card)
-    @cards << card
+  def add_card
+    @cards << @deck.deal
   end
 
   def clean_cards
     @cards = []
   end
 
+  def scores
+    @deck.scores(@cards)
+  end
+
   def show_cards(back_of_card = false)
     cards = @cards
-    sc = scores
+    sc = @deck.scores(cards)
     if back_of_card
       cards = @cards.map { |card| card[:view] = '*' }
       sc = '?'

@@ -1,3 +1,3 @@
-require_relative 'gameplay'
+require_relative 'menu'
 
-Gameplay.new.go
+Menu.new.run
