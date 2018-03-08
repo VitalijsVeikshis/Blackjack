@@ -5,13 +5,14 @@ class Table
     @player = options[:player]
     @diller = options[:diller]
     @bet = options[:bet]
+    @deck = Deck.new
   end
 
   def play
     validate!
     @queue = [@player, @diller]
     @active = @queue.shift
-    @deck = Deck.new(empty: false)
+    @deck.fill_deck
     @bank = 2 * @bet
     puts "Bank: #{@bank}"
     initialize_players

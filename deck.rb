@@ -9,9 +9,14 @@ class Deck
 
   attr_reader :deck
 
-  def initialize(options)
+  def initialize
     @deck = []
-    @deck = make_deck.shuffle unless options[:empty]
+  end
+
+  def fill_deck
+    @deck = SUITS.map { |suit, view| initialize_suit(suit, view) }
+                 .flatten
+                 .shuffle
   end
 
   def deal
@@ -43,10 +48,6 @@ class Deck
   end
 
   private
-
-  def make_deck
-    SUITS.map { |suit, view| initialize_suit(suit, view) }.flatten
-  end
 
   def initialize_suit(suit, view)
     CARD_RANGE.map do |value|

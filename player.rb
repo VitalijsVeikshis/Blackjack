@@ -5,7 +5,7 @@ class Player
   def initialize(options)
     @name = options[:name]
     @bankroll = options[:bankroll]
-    @deck = Deck.new(empty: true)
+    @deck = Deck.new
   end
 
   def add_bankroll(amount)
