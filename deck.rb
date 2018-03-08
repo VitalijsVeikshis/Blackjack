@@ -7,28 +7,39 @@ class Deck
     spades: "\u2664".encode('utf-8')
   }.freeze
 
-  def initialize
-    @deck = make_deck.shuffle
+  attr_reader :deck
+
+  def initialize(options)
+    @deck = []
+    @deck = make_deck.shuffle unless options[:empty]
   end
 
   def deal
     @deck.pop
   end
 
-  def scores(cards)
+  def add_card(card)
+    @deck << card
+  end
+
+  def clean_deck
+    @deck = []
+  end
+
+  def scores(cards = @deck)
     cards.reduce(0) { |scores, card| scores + score_get(card, scores) }
   end
 
   def draw?(winner, foe)
-    scores(winner.cards) == scores(foe.cards)
+    scores(winner.hand) == scores(foe.hand)
   end
 
   def win?(winner, foe)
-    winner?(winner, foe) || scores(foe.cards) > 21
+    winner?(winner, foe) || scores(foe.hand) > 21
   end
 
   def winner?(winner, foe)
-    scores(winner.cards) <= 21 && scores(winner.cards) > scores(foe.cards)
+    scores(winner.hand) <= 21 && scores(winner.hand) > scores(foe.hand)
   end
 
   private

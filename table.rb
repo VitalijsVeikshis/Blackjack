@@ -11,7 +11,7 @@ class Table
     validate!
     @queue = [@player, @diller]
     @active = @queue.shift
-    @deck = Deck.new
+    @deck = Deck.new(empty: false)
     @bank = 2 * @bet
     puts "Bank: #{@bank}"
     initialize_players
@@ -21,10 +21,10 @@ class Table
   end
 
   def hit
-    if @active.cards.size > 2
+    if @active.hand.size > 2
       raise StandardError, "You can't take another card from the dealer!"
     end
-    @active.add_card
+    @active.add_card(@deck.deal)
     stand
   end
 
@@ -55,8 +55,7 @@ class Table
   def initialize_player(player)
     player.subtract_bankroll(@bet)
     player.clean_cards
-    player.deck = @deck
-    2.times { player.add_card }
+    2.times { player.add_card(@deck.deal) }
     player.show_cards
   end
 

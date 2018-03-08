@@ -1,11 +1,11 @@
 class Player
-  attr_accessor :name, :deck
-  attr_reader :bankroll, :cards
+  attr_accessor :name
+  attr_reader :bankroll
 
   def initialize(options)
     @name = options[:name]
     @bankroll = options[:bankroll]
-    @cards = []
+    @deck = Deck.new(empty: true)
   end
 
   def add_bankroll(amount)
@@ -16,23 +16,27 @@ class Player
     @bankroll -= amount
   end
 
-  def add_card
-    @cards << @deck.deal
+  def add_card(card)
+    @deck.add_card(card)
   end
 
   def clean_cards
-    @cards = []
+    @deck.clean_deck
   end
 
   def scores
-    @deck.scores(@cards)
+    @deck.scores
+  end
+
+  def hand
+    @deck.deck
   end
 
   def show_cards(back_of_card = false)
-    cards = @cards
-    sc = @deck.scores(cards)
+    cards = hand
+    sc = scores
     if back_of_card
-      cards = @cards.map { |card| card[:view] = '*' }
+      cards = @deck.deck.map { { view: '*' } }
       sc = '?'
     end
     print_cards(cards, sc)
