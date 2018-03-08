@@ -11,7 +11,6 @@ class Table
   def play
     validate!
     @queue = [@player, @dealer]
-    @active = @queue.shift
     @deck.fill_deck
     @bank = 2 * @bet
     puts "Bank: #{@bank}"
@@ -22,17 +21,16 @@ class Table
   end
 
   def hit
-    if @active.hand.size > 2
+    if @queue.first.hand.size > 2
       raise StandardError, "You can't take another card from the dealer!"
     end
-    @active.add_card(@deck.deal)
+    @queue.first.add_card(@deck.deal)
     stand
   end
 
   def stand
-    @active.show_cards if check_player < 21
-    @queue << @active
-    @active = @queue.shift
+    @queue.first.show_cards if check_player < 21
+    @queue << @queue.shift
     dealer_turn if @player.scores < 21 && @dealer_went == false
   end
 
