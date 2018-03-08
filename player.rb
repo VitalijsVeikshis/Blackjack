@@ -36,7 +36,7 @@ class Player
     cards = hand
     sc = scores
     if back_of_card
-      cards = @deck.deck.map { { view: '*' } }
+      cards = hand.map { { view: '*' } }
       sc = '?'
     end
     print_cards(cards, sc)

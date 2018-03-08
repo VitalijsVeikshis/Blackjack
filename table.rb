@@ -1,23 +1,23 @@
 class Table
-  attr_reader :player, :diller, :game
+  attr_reader :player, :dealer, :game
 
   def initialize(options)
     @player = options[:player]
-    @diller = options[:diller]
+    @dealer = options[:dealer]
     @bet = options[:bet]
     @deck = Deck.new
   end
 
   def play
     validate!
-    @queue = [@player, @diller]
+    @queue = [@player, @dealer]
     @active = @queue.shift
     @deck.fill_deck
     @bank = 2 * @bet
     puts "Bank: #{@bank}"
     initialize_players
     @game = true
-    @diller_went = false
+    @dealer_went = false
     check_player
   end
 
@@ -33,24 +33,24 @@ class Table
     @active.show_cards if check_player < 21
     @queue << @active
     @active = @queue.shift
-    diller_turn if @player.scores < 21 && @diller_went == false
+    dealer_turn if @player.scores < 21 && @dealer_went == false
   end
 
   def show
     check_winner
   end
 
-  def diller_turn
-    @diller_went = true
-    stand if @diller.scores >= 17
-    hit if @diller.scores < 17
+  def dealer_turn
+    @dealer_went = true
+    stand if @dealer.scores >= 17
+    hit if @dealer.scores < 17
   end
 
   private
 
   def initialize_players
     initialize_player(@player)
-    initialize_player(@diller)
+    initialize_player(@dealer)
   end
 
   def initialize_player(player)
@@ -61,21 +61,21 @@ class Table
   end
 
   def check_winner
-    draft_show if @deck.draw?(@player, @diller)
-    win_show(@player) if @deck.win?(@player, @diller)
-    win_show(@diller) if @deck.win?(@diller, @player)
+    draft_show if @deck.draw?(@player, @dealer)
+    win_show(@player) if @deck.win?(@player, @dealer)
+    win_show(@dealer) if @deck.win?(@dealer, @player)
   end
 
   def check_player
-    win_show(@diller) if @player.scores > 21
-    win_show(@player) if @player.scores == 21 && @diller.scores != 21
+    win_show(@dealer) if @player.scores > 21
+    win_show(@player) if @player.scores == 21 && @dealer.scores != 21
     @player.scores
   end
 
   def draft_show
     @game = false
     @player.add_bankroll(@bank / 2)
-    @diller.add_bankroll(@bank / 2)
+    @dealer.add_bankroll(@bank / 2)
     open_cards
     puts 'Draw!!!!'
   end
@@ -89,11 +89,11 @@ class Table
 
   def open_cards
     @player.show_cards
-    @diller.show_cards(false)
+    @dealer.show_cards(false)
   end
 
   def bankroll_zero?
-    @player.bankroll.zero? || @diller.bankroll.zero?
+    @player.bankroll.zero? || @dealer.bankroll.zero?
   end
 
   def validate!

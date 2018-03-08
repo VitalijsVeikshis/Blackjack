@@ -2,7 +2,7 @@ require_relative 'submenu'
 require_relative 'deck'
 require_relative 'table'
 require_relative 'player'
-require_relative 'diller'
+require_relative 'dealer'
 
 TAB1 = 3
 GAME = [
@@ -22,7 +22,7 @@ class Menu
       exit: SubMenu.new(head: '', indent: TAB1, items: EXIT)
     }
     @table = Table.new(player: Player.new(name: 'Stranger', bankroll: 100),
-                       diller: Diller.new(name: 'Diller', bankroll: 100),
+                       dealer: Dealer.new(name: 'Dealer', bankroll: 100),
                        bet: 10)
     @task = ''
   end
